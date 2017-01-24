@@ -34,34 +34,30 @@ func main() {
 
     username = strings.TrimSpace(username)
 
+    // fmt.Printf("\n%v\n", commitString)
+    fmt.Printf("\n%v\n", getCommitMessages(username, client))
+}
+
+func getCommitMessages(username string, client *github.Client) string {
+    commitString := ""
     reposList, _, _ := client.Repositories.List("", nil)
 
+
     for _, repo := range reposList {
-        // repoName := github.Stringify(repo.Name)
         repoName := *repo.Name
 
         //List the commits on each repository 
         commits, _, _ := client.Repositories.ListCommits(username, repoName, nil)
-        // fmt.Printf("\n%v\n", github.Stringify(commits))
 
         //Iterate through the array of commits
         for _, singleCommit := range commits {
 
-            //Guess this isn't needed :/
-            //Get a single commit's data from each index in the array
-            //singleCommit is a RepositoryCommit struct
-            // singleCommit := commits[i]
-
-
             //Get the Commit field of the RepositoryCommit struct
             //commitData is a Commmit struct
             commitData := singleCommit.Commit
-            //+ flag adds field names
-            fmt.Printf("\n%v\n", github.Stringify(commitData.Message))
+
+            commitString = commitString + " " + *commitData.Message
         }
     }
-
-    
-    
-
+    return commitString
 }
