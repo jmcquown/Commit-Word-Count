@@ -37,30 +37,28 @@ func main() {
     reposList, _, _ := client.Repositories.List("", nil)
 
     for _, repo := range reposList {
-        repoName := github.Stringify(repo.Name)
-
-        
-        fmt.Printf("\nRN %v || UN %v\n", repoName, username)
+        // repoName := github.Stringify(repo.Name)
+        repoName := *repo.Name
 
         //List the commits on each repository 
         commits, _, _ := client.Repositories.ListCommits(username, repoName, nil)
-        fmt.Printf("\n%v\n", github.Stringify(commits))
+        // fmt.Printf("\n%v\n", github.Stringify(commits))
 
-        // //Iterate through the array of commits
-        // for _, singleCommit := range commits {
+        //Iterate through the array of commits
+        for _, singleCommit := range commits {
 
-        //     //Guess this isn't needed :/
-        //     //Get a single commit's data from each index in the array
-        //     //singleCommit is a RepositoryCommit struct
-        //     // singleCommit := commits[i]
+            //Guess this isn't needed :/
+            //Get a single commit's data from each index in the array
+            //singleCommit is a RepositoryCommit struct
+            // singleCommit := commits[i]
 
 
-        //     //Get the Commit field of the RepositoryCommit struct
-        //     //commitData is a Commmit struct
-        //     commitData := singleCommit.Commit
-        //     //+ flag adds field names
-        //     fmt.Printf("\n%v\n", github.Stringify(commitData.Message))
-        // }
+            //Get the Commit field of the RepositoryCommit struct
+            //commitData is a Commmit struct
+            commitData := singleCommit.Commit
+            //+ flag adds field names
+            fmt.Printf("\n%v\n", github.Stringify(commitData.Message))
+        }
     }
 
     
