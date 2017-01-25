@@ -10,6 +10,7 @@ import (
     "strings"
     "os"
     "syscall"
+    "sort"
 )
 
 
@@ -40,24 +41,12 @@ func main() {
 
 
     fmt.Print("\n")
-    //Iterate through the map and print each key/value pair
     wordCountMap := wordCount(messages)
-    for key, value := range wordCountMap {
-        fmt.Printf("%v:\t%v\n", key, value)
+    sortedMap := sortWordCount(wordCountMap)
+    //Iterate through the PairList
+    for _, value := range sortedMap {
+        fmt.Printf("%v:\t%v\n", value.Key, value.Value)
     }
-}
-
-//Gets word count and return a map with Key - string Value - int
-func wordCount(words string) map[string]int {
-    //Split each word in words by " " and return a list of words
-    wordList := strings.Fields(words)
-    counts := make(map[string]int)
-
-    for i := range wordList {
-        counts[wordList[i]]++
-    }
-
-    return counts
 }
 
 func getCommitMessages(username string, client *github.Client) string {
@@ -84,3 +73,46 @@ func getCommitMessages(username string, client *github.Client) string {
     }
     return commitString
 }
+
+//Gets word count and return a map with Key - string Value - int
+func wordCount(words string) map[string]int {
+    //Split each word in words by " " and return a list of words
+    wordList := strings.Fields(words)
+    counts := make(map[string]int)
+
+    for i := range wordList {
+        counts[wordList[i]]++
+    }
+
+    return counts
+}
+
+
+//http://stackoverflow.com/a/18695740
+//Returns a map that is sorted by value
+func sortWordCount(counts map[string]int) PairList {
+    p := make(PairList, len(counts))
+    index := 0
+    for key, value := range counts {
+        p[index] = Pair{key, value}
+        index++
+    }
+
+    sort.Sort(sort.Reverse(p))
+    return p
+}
+
+//All of the below is necessary in order to sort the wordcount by value
+type Pair struct {
+    Key string
+    Value int
+}
+
+type PairList []Pair
+
+func (p PairList) Len() int {return len(p)}
+func (p PairList) Less(i, j int) bool {return p[i].Value < p[j].Value}
+func (p PairList) Swap(i, j int) {p[i], p[j] = p[j], p[i]}
+
+
+
